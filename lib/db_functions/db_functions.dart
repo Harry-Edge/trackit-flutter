@@ -19,16 +19,67 @@ class SQLiteDB {
         date_inputted TIMESTAMP NOT NULL,
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       );""");
-  }
 
+    await database.execute("""CREATE TABLE user(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        weight_preference TEXT,
+        current_weight REAL,
+        targets_enabled INT
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );""");
+    await database.execute("""CREATE TABLE strength_records(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        inputted_weight REAL,
+        exercise TEXT,
+        date_inputted TIMESTAMP NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );""");
+  }
   static Future<sql.Database> sqLitedb() async {
     return sql.openDatabase(
-      'sql_liteEeeeeee.db',
+      'sql_liteEeeeeeeerd.db',
       version: 1,
       onCreate: (sql.Database database, int version) async {
         await createTables(database);
       },
     );
+  }
+
+  static createUserInstance() async {
+    final db = await SQLiteDB.sqLitedb();
+
+    final data = {'weight_preference': 'KG',
+                  'targets_enabled': 0};
+
+    await db.insert('user', data,
+        conflictAlgorithm: sql.ConflictAlgorithm.replace);
+  }
+
+  // Read all items weight
+  static Future<List<Map<String, dynamic>>> getUserData() async {
+    final db = await sqLitedb();
+    return db.query('user', orderBy: "id");
+  }
+
+  static returnWeightPreference() async {
+
+  }
+
+  static updateTargetsOption(newValue) async {
+    final db = await sqLitedb();
+
+    final data = {'targets_enabled': newValue};
+    await db.update('user', data, where: "id = ?", whereArgs: [1]);
+  }
+
+  static updateWeightPreference(newValue) async {
+    final db = await sqLitedb();
+    final data = {'weight_preference': newValue};
+    await db.update('user', data, where: "id = ?", whereArgs: [1]);
+  }
+
+  static returnFormattedWeightPreference (){
+    return 0;
   }
 
   // Read all items weight

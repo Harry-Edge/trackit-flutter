@@ -20,6 +20,8 @@ class _LoadingState extends State<Loading> {
 
     print(weightData);
 
+    // await SQLiteDB.createUserInstance();
+
     // await SQLiteDB.createItem(5.0, 86);
 
     // SQLiteDB.rawSQLQuery("DROP TABLE weight_entries");

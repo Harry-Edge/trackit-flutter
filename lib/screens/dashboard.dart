@@ -19,9 +19,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   List<Map> ? _calorieData;
   bool _isLoading = true;
 
-  final List<WeightData> _mapWeightData = [];
-  final List<CalorieData> _mapCalorieData = [];
-
   void _refreshData() async {
     final data = await SQLiteDB.getWeightData();
     final calorieData = await SQLiteDB.getCalorieData();
@@ -30,31 +27,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       _weightData = data;
       _calorieData = calorieData;
       _isLoading = false;
-
-      for (var weight in _weightData!){
-
-        var parsedDate = DateTime.parse(weight['date_inputted']);
-        final DateFormat formatter = DateFormat('dd-MM');
-        final String formatted = formatter.format(parsedDate);
-
-        _mapWeightData.add(
-            WeightData(
-                formatted,
-                weight['inputted_weight']));
-      }
-
-      for (var calorie in _calorieData!){
-        var parsedDate = DateTime.parse(calorie['date_inputted']);
-        final DateFormat formatter = DateFormat('dd-MM-yyyy');
-        final String formatted = formatter.format(parsedDate);
-
-        _mapCalorieData.add(
-          CalorieData(
-            formatted,
-            calorie['inputted_calories']
-          )
-        );
-      }
     });
   }
 
@@ -113,11 +85,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             children: [
                               IconButton(
                                   onPressed: () => _deleteItem(_weightData![index]['id']),
-                                  icon: Icon(Icons.delete))
+                                  icon: const Icon(Icons.delete))
                             ],
                           )
                       ),
-
                     )
                 )),
           ],
