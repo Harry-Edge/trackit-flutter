@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:track_it/db_functions/db_functions.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:track_it/components/weight_chart.dart';
+import 'package:track_it/components/calorie_chart.dart';
+
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -14,7 +16,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
 
   List<Map> ? _weightData;
-  List<Map> _calorieData = [];
+  List<Map> ? _calorieData;
   bool _isLoading = true;
 
   final List<WeightData> _mapWeightData = [];
@@ -41,7 +43,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 weight['inputted_weight']));
       }
 
-      for (var calorie in _calorieData){
+      for (var calorie in _calorieData!){
         var parsedDate = DateTime.parse(calorie['date_inputted']);
         final DateFormat formatter = DateFormat('dd-MM-yyyy');
         final String formatted = formatter.format(parsedDate);
@@ -92,19 +94,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             const SizedBox(height: 10.0),
             WeightChart(weightData: _weightData!),
             const SizedBox(height: 10.0),
-            SfCartesianChart(
-              // Initialize category axis
-                primaryXAxis: CategoryAxis(),
-
-                series: <LineSeries<CalorieData, String>>[
-                  LineSeries<CalorieData, String>(
-                    // Bind data source
-                      dataSource:  _mapCalorieData,
-                      xValueMapper: (CalorieData calorie, _) => calorie.date,
-                      yValueMapper: (CalorieData calorie, _) => calorie.calories
-                  )
-                ]
-            ),
+            CalorieChart(calorieData: _calorieData!),
             const SizedBox(height: 10.0),
             ListView.builder(
                 shrinkWrap: true,
