@@ -37,7 +37,7 @@ class SQLiteDB {
   }
   static Future<sql.Database> sqLitedb() async {
     return sql.openDatabase(
-      'sql_liteEeeeeeeserdeSDaD.db',
+      'sql_liteEeeedeeseserdeSDaD.db',
       version: 1,
       onCreate: (sql.Database database, int version) async {
         await createTables(database);
@@ -85,12 +85,12 @@ class SQLiteDB {
   // Read all items weight
   static Future<List<Map<String, dynamic>>> getWeightData() async {
     final db = await sqLitedb();
-    return db.query('weight_entries', orderBy: "id");
+    return db.query('weight_entries', orderBy: "date_inputted");
   }
 
   static Future<List<Map<String, dynamic>>> getCalorieData() async {
     final db = await sqLitedb();
-    return db.query('calorie_entries', orderBy: "id");
+    return db.query('calorie_entries', orderBy: "date_inputted");
   }
 
   static Future<List<Map<String, dynamic>>> rawSQLQuery(query) async {

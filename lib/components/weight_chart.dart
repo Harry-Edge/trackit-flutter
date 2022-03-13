@@ -26,10 +26,11 @@ class _WeightChartState extends State<WeightChart> {
         enablePinching: true,
         enablePanning: true,
         zoomMode: ZoomMode.x,
-
+        maximumZoomLevel: 0.5,
         enableDoubleTapZooming: true);
     _parseData();
   }
+
 
   void _parseData() {
     setState(() {
@@ -38,9 +39,6 @@ class _WeightChartState extends State<WeightChart> {
           DateTime.parse(weight['date_inputted']),
           weight['inputted_weight']
         ));
-
-        print(_mapWeightData);
-
       }
     });
   }
@@ -53,7 +51,12 @@ class _WeightChartState extends State<WeightChart> {
       margin: const EdgeInsets.all(10),
       child: SfCartesianChart(
         // Initialize category axis
-          title: ChartTitle(text: 'Weight'),
+          title: ChartTitle(
+              text: 'Weight',
+              textStyle: const TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold)
+          ),
           zoomPanBehavior: _zoomPanBehavior,
           tooltipBehavior: TooltipBehavior( enable: true),
           series: [
@@ -65,16 +68,15 @@ class _WeightChartState extends State<WeightChart> {
                 color: Colors.yellow[700],
                 animationDuration: 2000,
                 width: 3,
-                yAxisName: 'yAxis1',
                 opacity: 1,
                 splineType: SplineType.monotonic,
                 cardinalSplineTension: 0.9,
                 yValueMapper: (WeightData weight, _) => weight.weight,
                 markerSettings: MarkerSettings(
                     isVisible: true,
-                    height: 3,
-                    width: 3,
-                    shape: DataMarkerType.diamond,
+                    height: 2,
+                    width: 2,
+                    shape: DataMarkerType.circle,
                     borderWidth: 3,
                     borderColor: Colors.yellow[700])
             )

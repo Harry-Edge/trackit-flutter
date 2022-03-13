@@ -14,26 +14,28 @@ class CalorieChart extends StatefulWidget {
 
 class _CalorieChartState extends State<CalorieChart> {
 
-  List<CalorieData> _mapCalorieData = [];
+  late final List<CalorieData> _mapCalorieData = [];
+  late ZoomPanBehavior _zoomPanBehavior;
 
   @override
   void initState()  {
     super.initState();
+    _zoomPanBehavior = ZoomPanBehavior(
+        enablePinching: true,
+        enablePanning: true,
+        zoomMode: ZoomMode.x,
+        maximumZoomLevel: 0.5,
+        enableDoubleTapZooming: true);
     _parseData();
   }
 
   void _parseData() {
     setState(() {
       for (var weight in widget.calorieData){
-
-        var parsedDate = DateTime.parse(weight['date_inputted']);
-        final DateFormat formatter = DateFormat('dd-MM');
-        final String formatted = formatter.format(parsedDate);
-
-        _mapCalorieData.add(
-            CalorieData(
-                formatted,
-                weight['inputted_calories']));
+        _mapCalorieData.add(CalorieData(
+            DateTime.parse(weight['date_inputted']),
+            weight['inputted_calories']
+        ));
       }
     });
   }
@@ -46,21 +48,43 @@ class _CalorieChartState extends State<CalorieChart> {
       margin: const EdgeInsets.all(10),
       child: SfCartesianChart(
         // Initialize category axis
-          primaryXAxis: CategoryAxis(),
-          title: ChartTitle(text: 'Calories'),
+          title: ChartTitle(
+              text: 'Calories',
+              textStyle: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold
+              )),
+          zoomPanBehavior: _zoomPanBehavior,
           tooltipBehavior: TooltipBehavior( enable: true),
-          series: <LineSeries<CalorieData, String>>[
-            LineSeries<CalorieData, String>(
+          series: <SplineSeries<CalorieData, DateTime>>[
+            SplineSeries<CalorieData, DateTime>(
               // Bind data source
                 dataSource:  _mapCalorieData,
+                name: 'Calories (Kcal)',
                 xValueMapper: (CalorieData calories, _) => calories.date,
+                color: Colors.yellow[700],
+                animationDuration: 2000,
+                width: 3,
+                opacity: 1,
+                splineType: SplineType.monotonic,
+                cardinalSplineTension: 0.9,
                 yValueMapper: (CalorieData calories, _) => calories.calories,
-                dataLabelSettings: const DataLabelSettings(isVisible: true),
-                markerSettings: const MarkerSettings(
+                markerSettings: MarkerSettings(
+                    isVisible: true,
+                    height: 3,
+                    width: 3,
+                    shape: DataMarkerType.circle,
                     borderWidth: 3,
-                    borderColor: Colors.red)
+                    borderColor: Colors.yellow[700])
             )
-          ]
+          ],
+          primaryXAxis: DateTimeAxis(
+              edgeLabelPlacement: EdgeLabelPlacement.shift),
+          primaryYAxis: NumericAxis(
+              labelAlignment: LabelAlignment.end,
+              labelFormat: '{value} Kcal',
+              maximumLabels: 3,
+              numberFormat: NumberFormat.decimalPattern()),
       ),
     );
   }
@@ -69,5 +93,5 @@ class _CalorieChartState extends State<CalorieChart> {
 class CalorieData {
   CalorieData(this.date, this.calories);
   final double calories;
-  final String date;
+  final DateTime date;
 }
