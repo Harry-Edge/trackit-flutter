@@ -15,26 +15,32 @@ class WeightChart extends StatefulWidget {
 
 class _WeightChartState extends State<WeightChart> {
 
-  List<WeightData> _mapWeightData = [];
+  late final List<WeightData> _mapWeightData = [];
+  late ZoomPanBehavior _zoomPanBehavior;
+
 
   @override
   void initState()  {
     super.initState();
+    _zoomPanBehavior = ZoomPanBehavior(
+        enablePinching: true,
+        enablePanning: true,
+        zoomMode: ZoomMode.x,
+
+        enableDoubleTapZooming: true);
     _parseData();
   }
 
   void _parseData() {
     setState(() {
       for (var weight in widget.weightData){
+        _mapWeightData.add(WeightData(
+          DateTime.parse(weight['date_inputted']),
+          weight['inputted_weight']
+        ));
 
-        var parsedDate = DateTime.parse(weight['date_inputted']);
-        final DateFormat formatter = DateFormat('dd-MM');
-        final String formatted = formatter.format(parsedDate);
+        print(_mapWeightData);
 
-        _mapWeightData.add(
-            WeightData(
-                formatted,
-                weight['inputted_weight']));
       }
     });
   }
@@ -47,21 +53,38 @@ class _WeightChartState extends State<WeightChart> {
       margin: const EdgeInsets.all(10),
       child: SfCartesianChart(
         // Initialize category axis
-          primaryXAxis: CategoryAxis(),
           title: ChartTitle(text: 'Weight'),
+          zoomPanBehavior: _zoomPanBehavior,
           tooltipBehavior: TooltipBehavior( enable: true),
-          series: <LineSeries<WeightData, String>>[
-            LineSeries<WeightData, String>(
+          series: [
+            SplineSeries(
               // Bind data source
+                name: 'Weight (KG)',
                 dataSource:  _mapWeightData,
                 xValueMapper: (WeightData weight, _) => weight.date,
+                color: Colors.yellow[700],
+                animationDuration: 2000,
+                width: 3,
+                yAxisName: 'yAxis1',
+                opacity: 1,
+                splineType: SplineType.monotonic,
+                cardinalSplineTension: 0.9,
                 yValueMapper: (WeightData weight, _) => weight.weight,
-                dataLabelSettings: DataLabelSettings(isVisible: true),
                 markerSettings: MarkerSettings(
+                    isVisible: true,
+                    height: 3,
+                    width: 3,
+                    shape: DataMarkerType.diamond,
                     borderWidth: 3,
-                    borderColor: Colors.red)
+                    borderColor: Colors.yellow[700])
             )
-          ]
+          ],
+          primaryXAxis: DateTimeAxis(
+              edgeLabelPlacement: EdgeLabelPlacement.shift),
+          primaryYAxis: NumericAxis(
+              labelFormat: '{value} KG',
+              maximumLabels: 3,
+              numberFormat: NumberFormat.decimalPattern()),
       ),
     );
   }
@@ -70,5 +93,5 @@ class _WeightChartState extends State<WeightChart> {
 class WeightData {
   WeightData(this.date, this.weight);
   final double weight;
-  final String date;
+  final DateTime date;
 }

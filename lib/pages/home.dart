@@ -294,6 +294,7 @@ class _HomeState extends State<Home> {
     print(dropdownValue);
 
     if (dropdownValue == 'Weight') {
+      print(selectedDate);
       await SQLiteDB.createNewWeightEntry(
           1, _valueEnteredController.text, selectedDate
       );

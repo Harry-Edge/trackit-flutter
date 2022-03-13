@@ -37,7 +37,7 @@ class SQLiteDB {
   }
   static Future<sql.Database> sqLitedb() async {
     return sql.openDatabase(
-      'sql_liteEeeeeeeerd.db',
+      'sql_liteEeeeeeeserdeSDaD.db',
       version: 1,
       onCreate: (sql.Database database, int version) async {
         await createTables(database);
